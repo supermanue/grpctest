@@ -29,6 +29,8 @@ class MessageServiceImpl(system: ActorSystem[_]) extends MessageStreamer {
    * #service-stream
    * #service-request-reply
    */
+  //TODO functionality: 1. validate input; 2. call service from domain layer; 3. manage errors with Source.failed
+
   override def sendMessageStream(in: StreamRequest): Source[StreamResponse, NotUsed] = {
     //TODO these should not be constants
     val randomSeed = 0
@@ -39,6 +41,11 @@ class MessageServiceImpl(system: ActorSystem[_]) extends MessageStreamer {
 
     val list = intMessages.dropRight(1).map(n => StreamResponse(n.toString)).appended(StreamResponse(intMessages.last.toString, Some(checksum)))
     Source.fromIterator(() => Iterator.from(list))
+    //TODO aquí habría que usar algo como esto creo, lo que queremos es que sea futures todo
+    /*
+      def futureSource[T, M](futureSource: Future[Source[T, M]]): Source[T, Future[M]] =
+
+     */
   }
 
   private def messages(n: Int, randomSeed: Int): Seq[Int] = {
