@@ -1,15 +1,13 @@
-package com.example.helloworld
+package com.manuel.ably.app
 
 //#import
-import scala.concurrent.Future
 
 import akka.NotUsed
 import akka.actor.typed.ActorSystem
-import akka.stream.scaladsl.BroadcastHub
-import akka.stream.scaladsl.Keep
-import akka.stream.scaladsl.MergeHub
-import akka.stream.scaladsl.Sink
-import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.{BroadcastHub, Keep, MergeHub, Sink, Source}
+import com.manuel.ably.{GreeterService, HelloReply, HelloRequest}
+
+import scala.concurrent.Future
 
 //#import
 
@@ -21,7 +19,7 @@ class GreeterServiceImpl(system: ActorSystem[_]) extends GreeterService {
   //#service-request-reply
   val (inboundHub: Sink[HelloRequest, NotUsed], outboundHub: Source[HelloReply, NotUsed]) =
     MergeHub.source[HelloRequest]
-    .map(request => HelloReply(s"Hello, ${request.name}"))
+      .map(request => HelloReply(s"Hello, ${request.name}"))
       .toMat(BroadcastHub.sink[HelloReply])(Keep.both)
       .run()
   //#service-request-reply

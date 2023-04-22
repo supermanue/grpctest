@@ -1,9 +1,9 @@
 //#full-example
-package com.example.helloworld
+package com.manuel.ably.app
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
-
+import com.manuel.ably.{HelloReply, HelloRequest}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -13,9 +13,9 @@ import scala.concurrent.duration._
 
 class GreeterServiceImplSpec
   extends AnyWordSpec
-  with BeforeAndAfterAll
-  with Matchers
-  with ScalaFutures {
+    with BeforeAndAfterAll
+    with Matchers
+    with ScalaFutures {
 
   val testKit = ActorTestKit()
 

@@ -1,13 +1,12 @@
 //#full-example
-package com.example.helloworld
+package com.manuel.ably.app
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.grpc.GrpcClientSettings
-
+import com.manuel.ably.{GreeterServiceClient, HelloReply, HelloRequest}
 import com.typesafe.config.ConfigFactory
-
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -17,9 +16,9 @@ import scala.concurrent.duration._
 
 class GreeterSpec
   extends AnyWordSpec
-  with BeforeAndAfterAll
-  with Matchers
-  with ScalaFutures {
+    with BeforeAndAfterAll
+    with Matchers
+    with ScalaFutures {
 
   implicit val patience: PatienceConfig = PatienceConfig(scaled(5.seconds), scaled(100.millis))
 

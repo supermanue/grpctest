@@ -1,18 +1,15 @@
-package com.example.helloworld
+package com.manuel.ably.app
 
-//#import
-import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Failure
-import scala.util.Success
-import akka.Done
-import akka.NotUsed
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.grpc.GrpcClientSettings
 import akka.stream.scaladsl.Source
+import akka.{Done, NotUsed}
+import com.manuel.ably.{GreeterServiceClient, HelloReply, HelloRequest}
 
-//#import
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 //#client-request-reply
 object GreeterClient {
@@ -75,4 +72,3 @@ object GreeterClient {
   }
 
 }
-//#client-request-reply
