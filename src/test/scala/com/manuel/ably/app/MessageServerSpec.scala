@@ -1,11 +1,12 @@
 //#full-example
 package com.manuel.ably.app
 
+import akka.Done
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.grpc.GrpcClientSettings
-import com.manuel.ably.{GreeterServiceClient, HelloReply, HelloRequest}
+import com.manuel.ably.{MessageStreamerClient, StreamRequest}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
@@ -14,7 +15,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
 
-class GreeterSpec
+class MessageServerSpec
   extends AnyWordSpec
     with BeforeAndAfterAll
     with Matchers
@@ -29,15 +30,14 @@ class GreeterSpec
   val testKit = ActorTestKit(conf)
 
   val serverSystem: ActorSystem[_] = testKit.system
-  val bound = new GreeterServer(serverSystem).run()
+  val bound = new MessageServer(serverSystem).run()
 
   // make sure server is bound before using client
   bound.futureValue
 
   implicit val clientSystem: ActorSystem[_] = ActorSystem(Behaviors.empty, "GreeterClient")
 
-  val client =
-    GreeterServiceClient(GrpcClientSettings.fromConfig("helloworld.GreeterService"))
+  val client: MessageStreamerClient = MessageStreamerClient(GrpcClientSettings.fromConfig("helloworld.GreeterService"))
 
   override def afterAll: Unit = {
     ActorTestKit.shutdown(clientSystem)
@@ -45,10 +45,16 @@ class GreeterSpec
   }
 
   "GreeterService" should {
-    "reply to single request" in {
-      val reply = client.sayHello(HelloRequest("Alice"))
-      reply.futureValue should ===(HelloReply("Hello, Alice"))
+    "handle StreamRequests" in {
+      val request = StreamRequest("uuid", Some(1))
+      val reply = client.sendMessageStream(request)
+      val response = reply.run().futureValue
+
+      response should ===(Done.done())
     }
   }
+
+  //TODO check for errors
+  //TODO scalability tests
 }
 //#full-example

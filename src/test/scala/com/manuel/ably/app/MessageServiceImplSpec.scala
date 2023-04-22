@@ -3,7 +3,8 @@ package com.manuel.ably.app
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
-import com.manuel.ably.{HelloReply, HelloRequest}
+import com.manuel.ably.StreamRequest
+import com.manuel.ably.domain.Checksum
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -11,7 +12,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
 
-class GreeterServiceImplSpec
+class MessageServiceImplSpec
   extends AnyWordSpec
     with BeforeAndAfterAll
     with Matchers
@@ -23,16 +24,21 @@ class GreeterServiceImplSpec
 
   implicit val system: ActorSystem[_] = testKit.system
 
-  val service = new GreeterServiceImpl(system)
+  val service = new MessageServiceImpl(system)
 
   override def afterAll(): Unit = {
     testKit.shutdownTestKit()
   }
 
-  "GreeterServiceImpl" should {
+  "MessageServiceImpl" should {
     "reply to single request" in {
-      val reply = service.sayHello(HelloRequest("Bob"))
-      reply.futureValue should ===(HelloReply("Hello, Bob"))
+      val request = StreamRequest("uuid", Some(2))
+      val reply = service.sendMessageStream(request)
+      val fullResponse = reply.runFold[(String, Option[Int])](("", None))((acum, response) =>
+        (acum._1 + response.message, response.checksum)).futureValue
+
+      Checksum.adler32sum(fullResponse._1) should ===(fullResponse._2.getOrElse(throw new Exception("test failed")))
+
     }
   }
 }
