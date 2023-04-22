@@ -8,7 +8,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.pki.pem.{DERPrivateKeyLoader, PEMDecoder}
-import com.manuel.ably.GreeterServiceHandler
+import com.manuel.ably.MessageStreamerHandler
 import com.typesafe.config.ConfigFactory
 
 import java.security.cert.{Certificate, CertificateFactory}
@@ -22,25 +22,25 @@ import scala.util.{Failure, Success}
 
 
 //#server
-object GreeterServer {
+object MessageServer {
 
   def main(args: Array[String]): Unit = {
     // important to enable HTTP/2 in ActorSystem's config
     val conf = ConfigFactory.parseString("akka.http.server.preview.enable-http2 = on")
       .withFallback(ConfigFactory.defaultApplication())
     val system = ActorSystem[Nothing](Behaviors.empty, "GreeterServer", conf)
-    new GreeterServer(system).run()
+    new MessageServer(system).run()
   }
 }
 
-class GreeterServer(system: ActorSystem[_]) {
+class MessageServer(system: ActorSystem[_]) {
 
   def run(): Future[Http.ServerBinding] = {
     implicit val sys = system
     implicit val ec: ExecutionContext = system.executionContext
 
     val service: HttpRequest => Future[HttpResponse] =
-      GreeterServiceHandler(new GreeterServiceImpl(system))
+      MessageStreamerHandler(new MessageServiceImpl(system))
 
     val bound: Future[Http.ServerBinding] = Http(system)
       .newServerAt(interface = "127.0.0.1", port = 8080)
@@ -67,7 +67,7 @@ class GreeterServer(system: ActorSystem[_]) {
       DERPrivateKeyLoader.load(PEMDecoder.decode(readPrivateKeyPem()))
     val fact = CertificateFactory.getInstance("X.509")
     val cer = fact.generateCertificate(
-      classOf[GreeterServer].getResourceAsStream("/certs/server1.pem")
+      classOf[MessageServer].getResourceAsStream("/certs/server1.pem")
     )
     val ks = KeyStore.getInstance("PKCS12")
     ks.load(null)

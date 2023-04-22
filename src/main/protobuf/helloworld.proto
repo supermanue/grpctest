@@ -5,27 +5,16 @@ option java_multiple_files = true;
 option java_package = "com.manuel.ably";
 option java_outer_classname = "AblyProto";
 
-// The greeting service definition.
-service GreeterService {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
-  //#service-request-reply
-  //#service-stream
-  // The stream of incoming HelloRequest messages are
-  // sent out as corresponding HelloReply. From
-  // all clients to all clients, like a chat room.
-  rpc SayHelloToAll (stream HelloRequest) returns (stream HelloReply) {}
-  //#service-stream
-  //#service-request-reply
+service MessageStreamer {
+  rpc SendMessageStream (StreamRequest) returns (stream StreamResponse) {}
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message StreamRequest{
+  string uuid = 1;
+  optional int32 number = 2;
 }
 
-// The response message containing the greetings
-message HelloReply {
+message StreamResponse{
   string message = 1;
+  optional int32 checksum = 2;
 }
-//#service-request-reply
