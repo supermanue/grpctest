@@ -1,4 +1,4 @@
-package com.manuel.ably.domain
+package com.manuel.ably.domain.tools
 
 /**
  * Calculating the Adler-32 checksum using Scala.

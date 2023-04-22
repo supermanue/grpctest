@@ -4,7 +4,7 @@ package com.manuel.ably.app
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
 import com.manuel.ably.StreamRequest
-import com.manuel.ably.domain.Checksum
+import com.manuel.ably.domain.tools.Checksum
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers

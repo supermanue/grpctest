@@ -5,7 +5,7 @@ package com.manuel.ably.app
 import akka.NotUsed
 import akka.actor.typed.ActorSystem
 import akka.stream.scaladsl.Source
-import com.manuel.ably.domain.Checksum
+import com.manuel.ably.domain.tools.Checksum
 import com.manuel.ably.{MessageStreamer, StreamRequest, StreamResponse}
 
 //#import
