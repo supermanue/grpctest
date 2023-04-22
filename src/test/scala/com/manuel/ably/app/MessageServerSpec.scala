@@ -30,7 +30,7 @@ class MessageServerSpec
   val testKit = ActorTestKit(conf)
 
   val serverSystem: ActorSystem[_] = testKit.system
-  val bound = new MessageServer(serverSystem).run()
+  val bound = new MessageServer(serverSystem).run(Array.empty)
 
   // make sure server is bound before using client
   bound.futureValue

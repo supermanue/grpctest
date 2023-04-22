@@ -1,8 +1,5 @@
 package com.manuel.ably.app
 
-//#import
-
-
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
@@ -18,32 +15,37 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.util.{Failure, Success}
-//#import
 
-
-//#server
+/*
+This files handles the server wiring: receives GRPC petitions, transfers them to the relevant service and worry about SSL and that kind of stuff
+ */
 object MessageServer {
 
   def main(args: Array[String]): Unit = {
-    // important to enable HTTP/2 in ActorSystem's config
     val conf = ConfigFactory.parseString("akka.http.server.preview.enable-http2 = on")
       .withFallback(ConfigFactory.defaultApplication())
-    val system = ActorSystem[Nothing](Behaviors.empty, "GreeterServer", conf)
-    new MessageServer(system).run()
+    val system = ActorSystem[Nothing](Behaviors.empty, "AblyServer", conf)
+    new MessageServer(system).run(args)
   }
 }
 
 class MessageServer(system: ActorSystem[_]) {
 
-  def run(): Future[Http.ServerBinding] = {
+  def run(args: Array[String]): Future[Http.ServerBinding] = {
     implicit val sys = system
     implicit val ec: ExecutionContext = system.executionContext
 
-    val service: HttpRequest => Future[HttpResponse] =
-      MessageStreamerHandler(new MessageServiceImpl(system))
+    val defaultPort = 9000 //TODO this should go in a config file
+
+    val port =
+      if (args.length > 0) args(0).toInt //TODO this is unsafe and makes the App crash, but not a big dealç
+      else defaultPort
+
+    //this is an important line: The handler of GRPC MessageStreamer is MessageServiceImpl
+    val service: HttpRequest => Future[HttpResponse] =  MessageStreamerHandler(new MessageServiceImpl(system))
 
     val bound: Future[Http.ServerBinding] = Http(system)
-      .newServerAt(interface = "127.0.0.1", port = 8080)
+      .newServerAt(interface = "127.0.0.1", port = port)
       .enableHttps(serverHttpContext)
       .bind(service)
       .map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))
@@ -59,7 +61,6 @@ class MessageServer(system: ActorSystem[_]) {
 
     bound
   }
-  //#server
 
 
   private def serverHttpContext: HttpsConnectionContext = {
@@ -86,7 +87,5 @@ class MessageServer(system: ActorSystem[_]) {
 
   private def readPrivateKeyPem(): String =
     Source.fromResource("certs/server1.key").mkString
-  //#server
 
 }
-//#server

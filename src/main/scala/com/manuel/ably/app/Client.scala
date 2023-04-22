@@ -13,16 +13,11 @@ import scala.util.{Failure, Success}
 object Client {
 
   def main(args: Array[String]): Unit = {
-    implicit val sys: ActorSystem[_] = ActorSystem(Behaviors.empty, "GreeterClient")
+    implicit val sys: ActorSystem[_] = ActorSystem(Behaviors.empty, "AblyClient")
     implicit val ec: ExecutionContext = sys.executionContext
 
-    val client = MessageStreamerClient(GrpcClientSettings.fromConfig("helloworld.GreeterService"))
-
-    val names =
-      if (args.isEmpty) List("Alice", "Bob")
-      else args.toList
-
-    // names.foreach(singleRequestReply)
+    //TODO client por should be configurable as input param
+    val client = MessageStreamerClient(GrpcClientSettings.fromConfig("com.manuel.ably.client"))
     getMessageStream()
 
 
