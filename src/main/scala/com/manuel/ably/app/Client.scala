@@ -11,21 +11,20 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Random, Success}
 
-//#client-request-reply
 object Client {
 
   def main(args: Array[String]): Unit = {
     implicit val sys: ActorSystem[_] = ActorSystem(Behaviors.empty, "AblyClient")
     implicit val ec: ExecutionContext = sys.executionContext
 
-    //TODO client port should be configurable as input param
+    // TODO client port should be configurable as input param. It is implemented in the Server
     val client = MessageStreamerClient(GrpcClientSettings.fromConfig("com.manuel.ably.client"))
 
     val uuid = UUID.randomUUID().toString
     println(s"Performing getMessageStream with uuid $uuid")
 
     val desiredMessages =
-      if (args.length > 0) Some(args(0).toInt) //TODO this is unsafe and can make the App crash if the input is not an integer
+      if (args.length > 0) Some(args(0).toInt) // TODO this is unsafe and can make the App crash if the input is not an integer
       else None
     val input: StreamRequest = StreamRequest(uuid, desiredMessages)
 
@@ -53,7 +52,7 @@ object Client {
         case Failure(_: GrpcServiceException) =>
           println(s"Connection error in client. Retrying")
           Thread.sleep(Random.between(1000, 5000))
-          getMessageStream(input) //TODO this is not final recursive so potentially could end up in a stack overflow. It is not a risk with the current requirements though
+          getMessageStream(input) // TODO this is not final recursive so potentially could end up in a stack overflow.
         case Failure(e) =>
           println(s"Error in client, exiting: $e")
           System.exit(-1)

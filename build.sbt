@@ -47,5 +47,4 @@ libraryDependencies ++= Seq(
 
   //Mocks
   "org.scalatestplus" %% "mockito-4-6" % mockitoVersion % "test"
-
 )

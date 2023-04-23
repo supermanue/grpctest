@@ -2,7 +2,7 @@ package com.manuel.ably.domain.tools
 
 /**
  * Calculating the Adler-32 checksum using Scala.
- * Not tested as is copypasted from https://alvinalexander.com/scala/scala-adler-32-checksum-algorithm/
+ * TODO Not tested as is copypasted from https://alvinalexander.com/scala/scala-adler-32-checksum-algorithm/
  *
  * @see http://en.wikipedia.org/wiki/Adler-32
  */

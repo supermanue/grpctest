@@ -13,6 +13,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar.mock
 
+import java.util.UUID
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,7 @@ class MessageServiceImplSpec
 
   "MessageServiceImpl" should {
     "reply to single request" in {
-      val request = StreamRequest("uuid", Some(2))
+      val request = StreamRequest(UUID.randomUUID().toString, Some(2))
       val reply = service.sendMessageStream(request)
       val fullResponse = reply.runFold[(String, Option[Int])](("", None))((acum, response) =>
         (acum._1 + response.message, response.checksum)).futureValue

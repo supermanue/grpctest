@@ -16,12 +16,12 @@ class MessageServiceImpl(system: ActorSystem[_], messageStreamService: MessageSt
 
   override def sendMessageStream(in: StreamRequest): Source[StreamResponse, NotUsed] = {
 
-    //TODO: validate input: uuid is an UUID, number is positive and < 0xffff
+    // TODO: validate input: uuid is an UUID, number is positive and < 0xffff
     val futureMessages: Future[Seq[StreamResponse]] = messageStreamService.getMessages(in.uuid, in.number)
 
-    val source = Try(Await.result(futureMessages, 3.seconds)) match { //TODO this is ugly and inefficient. I should not be waiting here but use a direct stream from the service to output
+    val source = Try(Await.result(futureMessages, 3.seconds)) match { // TODO this is ugly and inefficient. I should not be waiting here but use a direct stream from the service to output
       case Success(messages) => Source.fromIterator(() => Iterator.from(messages))
-      case Failure(t) => Source.failed(t) //TODO this should include specific errors for each possible AppError element, providing info to the client
+      case Failure(t) => Source.failed(t) // TODO this should include specific errors for each possible AppError element, providing info to the client
     }
 
     Source

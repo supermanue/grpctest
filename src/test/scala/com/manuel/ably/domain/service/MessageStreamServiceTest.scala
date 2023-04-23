@@ -11,6 +11,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar.mock
 
+import java.util.UUID
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 
@@ -31,7 +32,7 @@ class MessageStreamServiceTest
     reset(userStatusRepositoryMock)
   }
 
-  val id: String = "id"
+  val id: String = UUID.randomUUID().toString
   val numberOfMessages: Option[Int] = Some(10)
 
   "MessageStreamService" should {

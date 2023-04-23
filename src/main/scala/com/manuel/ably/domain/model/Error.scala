@@ -16,7 +16,7 @@ final case class UserStatusDoesNotExist(id: String) extends AppError {
   val message = s"user status with id: $id doesn't exist"
 }
 
-final object NonExistingChecksum extends AppError {
+object NonExistingChecksum extends AppError {
   val message = s"client did not receive a checksum"
 }
 

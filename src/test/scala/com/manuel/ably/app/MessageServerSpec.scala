@@ -12,6 +12,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.util.UUID
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -38,12 +39,12 @@ class MessageServerSpec
 
   val client: MessageStreamerClient = MessageStreamerClient(GrpcClientSettings.fromConfig("com.manuel.ably.client"))
 
-  override def afterAll: Unit = {
+  override def afterAll(): Unit = {
     ActorTestKit.shutdown(clientSystem)
     testKit.shutdownTestKit()
   }
 
-  "GreeterService" should {
+  "MessageServer" should {
     "handle a single" in {
       val request = StreamRequest("uuid", Some(1))
       val reply = client.sendMessageStream(request)
@@ -52,10 +53,9 @@ class MessageServerSpec
       response should ===(Done.done())
     }
 
-
     "handle several client requests concurrently" in {
       val numberOfClients = 100
-      val requests = (1 to numberOfClients).map(id => StreamRequest(s"uuid-$id", Some(3)))
+      val requests = (1 to numberOfClients).map(_ => StreamRequest(UUID.randomUUID().toString, Some(3)))
       val replies = requests.map(client.sendMessageStream)
       val responses = replies.map(_.run())
 
@@ -63,5 +63,5 @@ class MessageServerSpec
     }
   }
 
-  //TODO checks to validate error messages
+  // TODO checks to validate error messages
 }

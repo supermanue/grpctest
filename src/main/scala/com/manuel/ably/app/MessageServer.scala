@@ -19,9 +19,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.util.{Failure, Success}
 
-/*
-This file handles the server wiring: receives GRPC petitions, transfers them to the relevant service and worry about SSL and that kind of stuff
- */
 object MessageServer {
 
   def main(args: Array[String]): Unit = {
@@ -38,10 +35,10 @@ class MessageServer(system: ActorSystem[_]) {
     implicit val sys = system
     implicit val ec: ExecutionContext = system.executionContext
 
-    val defaultPort = 9000 //TODO this should go in a config file
+    val defaultPort = 9000 // TODO this should go in a config file
     val cacheExpirationTime = 30
     val port =
-      if (args.length > 0) args(0).toInt //TODO this is unsafe and can make the App crash if the input is not an integer
+      if (args.length > 0) args(0).toInt // TODO this is unsafe and can make the App crash if the input is not an integer
       else defaultPort
 
 

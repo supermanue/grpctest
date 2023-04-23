@@ -7,6 +7,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.util.UUID
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 
@@ -24,7 +25,7 @@ class UserStatusRepositorySpec
     service.cache.invalidateAll()
   }
 
-  val status: UserStatus = UserStatus("id", 0, 1, 2)
+  val status: UserStatus = UserStatus(UUID.randomUUID().toString, 0, 1, 2)
   "UserStatusLocalCacheService" should {
     "store an element" in {
       service.store(status).futureValue should ===(())
