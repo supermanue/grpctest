@@ -20,7 +20,7 @@ import scala.io.Source
 import scala.util.{Failure, Success}
 
 /*
-This files handles the server wiring: receives GRPC petitions, transfers them to the relevant service and worry about SSL and that kind of stuff
+This file handles the server wiring: receives GRPC petitions, transfers them to the relevant service and worry about SSL and that kind of stuff
  */
 object MessageServer {
 
@@ -41,14 +41,14 @@ class MessageServer(system: ActorSystem[_]) {
     val defaultPort = 9000 //TODO this should go in a config file
     val cacheExpirationTime = 30
     val port =
-      if (args.length > 0) args(0).toInt //TODO this is unsafe and makes the App crash, but it's not a big deal
+      if (args.length > 0) args(0).toInt //TODO this is unsafe and can make the App crash if the input is not an integer
       else defaultPort
 
 
     val userIdsRepository: UsedIdsRepository = new UserIdsLocalCacheService()
     val userStatusRepository: UserStatusRepository = new UserStatusLocalCacheService(Some(cacheExpirationTime))
     val messageStreamService: MessageStreamService = new MessageStreamService(userIdsRepository, userStatusRepository)
-    val service: HttpRequest => Future[HttpResponse] =  MessageStreamerHandler(new MessageServiceImpl(system, messageStreamService))
+    val service: HttpRequest => Future[HttpResponse] = MessageStreamerHandler(new MessageServiceImpl(system, messageStreamService))
 
     val bound: Future[Http.ServerBinding] = Http(system)
       .newServerAt(interface = "127.0.0.1", port = port)

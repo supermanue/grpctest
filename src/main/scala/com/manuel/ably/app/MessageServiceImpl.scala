@@ -15,11 +15,12 @@ class MessageServiceImpl(system: ActorSystem[_], messageStreamService: MessageSt
   private implicit val sys: ActorSystem[_] = system
 
   //TODO functionality: 1. validate input;
+  //TODO I'm not sure at all that this supports concurrent clients
   override def sendMessageStream(in: StreamRequest): Source[StreamResponse, NotUsed] = {
 
     val futureMessages: Future[Seq[StreamResponse]] = messageStreamService.getMessages(in.uuid, in.number)
 
-    val source = Try(Await.result(futureMessages, 3.seconds)) match { //TODO this is incorrect. I should be waiting here but stream. Solve if I have time
+    val source = Try(Await.result(futureMessages, 3.seconds)) match { //TODO this is ugly and inefficient. I should not be waiting here but use a direct stream from the service to output
       case Success(messages) => Source.fromIterator(() => Iterator.from(messages))
       case Failure(t) => Source.failed(t) //TODO this should include specific errors for each possible AppError element, providing info to the client
     }
