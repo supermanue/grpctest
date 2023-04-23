@@ -63,6 +63,11 @@ class MessageStreamServiceTest
 
       assertThrows[IdAlreadyExists](Await.result(service.getMessages(id, numberOfMessages), 3.seconds))
     }
+
+    "updates the UserStatus cache" in {
+      when(userStatusRepositoryMock.increaseDeliveryCount(id)).thenReturn(Future(None))
+      service.confirmDelivery(id) should ===(())
+    }
   }
 
 }

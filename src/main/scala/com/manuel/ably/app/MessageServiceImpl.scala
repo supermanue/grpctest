@@ -27,7 +27,10 @@ class MessageServiceImpl(system: ActorSystem[_], messageStreamService: MessageSt
     Source
       .tick(1.second, 1.second, None)
       .zip(source)
-      .map { case (_, i) => i }
+      .map { case (_, response) =>
+        messageStreamService.confirmDelivery(in.uuid)
+        response
+      }
       .mapMaterializedValue(_ => NotUsed)
   }
 }

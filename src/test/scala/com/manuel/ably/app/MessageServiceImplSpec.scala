@@ -6,7 +6,7 @@ import com.manuel.ably.domain.service.MessageStreamService
 import com.manuel.ably.domain.tools.Checksum
 import com.manuel.ably.{StreamRequest, StreamResponse}
 import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{doNothing, when}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -34,6 +34,7 @@ class MessageServiceImplSpec
 
   override def beforeAll(): Unit = {
     when(mockMessageStreamService.getMessages(anyString(), any[Option[Int]])(any[ExecutionContext]())).thenReturn(Future.successful(Seq(StreamResponse("1"), StreamResponse("2", Some(9830500)))))
+    doNothing().when(mockMessageStreamService).confirmDelivery(anyString())(any[ExecutionContext]())
   }
 
   override def afterAll(): Unit = {
@@ -48,7 +49,6 @@ class MessageServiceImplSpec
         (acum._1 + response.message, response.checksum)).futureValue
 
       Checksum.adler32sum(fullResponse._1) should ===(fullResponse._2.getOrElse(throw new Exception("test failed")))
-
     }
   }
 }
