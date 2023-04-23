@@ -11,6 +11,8 @@ Testing:
 Executing server:
 
 ```bash
+chmod +x sbt
+
 ./sbt "runMain com.manuel.ably.app.MessageServer"
 
 #or with a different port
@@ -20,6 +22,7 @@ Executing server:
 Executing client
 
 ```bash 
+chmod +x sbt
 ./sbt "runMain com.manuel.ably.app.Client"
 
 #or with the desired number of messages
@@ -101,3 +104,8 @@ In the client, the current implementation can lead to a stack overflow if the se
 performing a non-final recursive call. This is definitely a hack and I'm aware of it, but it's nearly 20h on a Sunday
 and I cannot invest much more time on this project. I'm sorry for that. At least I'm pointing at the issue and the
 solution is fairly simple, I hope that's something  `¯\_(ツ)_/¯`.
+
+### Security
+
+I have included the server certificates in GH, which is extremely dangerous. This is done so this toy example works out
+of the box but would not be my approach in production environments

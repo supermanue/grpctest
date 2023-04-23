@@ -4,5 +4,3 @@ project/target
 target
 .idea
 .bsp
-/sbt-dist/bin/
-/src/main/resources/certs/
