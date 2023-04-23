@@ -7,8 +7,7 @@ import com.manuel.ably.domain.port.UserStatusRepository
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext
 
-class UserStatusLocalCacheService(context: ExecutionContext, expirationTimeSeconds: Option[Long]) extends UserStatusRepository {
-  implicit val ec: ExecutionContext = context
+class UserStatusLocalCacheService(expirationTimeSeconds: Option[Long]) extends UserStatusRepository {
 
   //TODO put these constants in a config file
   val maxSize = 10000L

@@ -17,7 +17,7 @@ class UserStatusLocalCacheServiceSpec
 
   implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
   val expirationTime = 2
-  val service = new UserStatusLocalCacheService(ec, Some(expirationTime))
+  val service = new UserStatusLocalCacheService(Some(expirationTime))
 
   override def beforeEach(): Unit = {
     service.cache.invalidateAll()

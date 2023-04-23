@@ -15,8 +15,8 @@ class UserIdsLocalCacheServiceSpec
     with Matchers
     with ScalaFutures {
 
-  val ec: ExecutionContext = ExecutionContext.Implicits.global
-  val service = new UserIdsLocalCacheService(ec)
+  implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
+  val service = new UserIdsLocalCacheService()
 
   override def beforeEach(): Unit = {
     service.cache.invalidateAll()

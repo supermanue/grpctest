@@ -5,8 +5,7 @@ import com.manuel.ably.domain.port.UsedIdsRepository
 
 import scala.concurrent.ExecutionContext
 
-class UserIdsLocalCacheService(context: ExecutionContext) extends UsedIdsRepository {
-  implicit val ec: ExecutionContext = context
+class UserIdsLocalCacheService() extends UsedIdsRepository {
   val maxSize = 10000L //TODO: put this constant in a config file
   override val cache: Cache[String, Long] = CacheBuilder.newBuilder().maximumSize(maxSize).build[String, Long]
 }

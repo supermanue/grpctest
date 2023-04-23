@@ -6,17 +6,15 @@ import com.manuel.ably.domain.model.{UserStatus, UserStatusDoesNotExist}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait UserStatusRepository {
-  implicit val ec: ExecutionContext
-
   val cache: Cache[String, UserStatus]
 
-  def get(id: String): Future[Option[UserStatus]] =
+  def get(id: String)(implicit ec: ExecutionContext): Future[Option[UserStatus]] =
     Future(Option(cache.getIfPresent(id)))
 
-  def store(status: UserStatus): Future[Unit] =
+  def store(status: UserStatus)(implicit ec: ExecutionContext): Future[Unit] =
     Future(cache.put(status.id, status))
 
-  def increaseDeliveryCount(id: String): Future[Unit] = {
+  def increaseDeliveryCount(id: String)(implicit ec: ExecutionContext): Future[Unit] = {
     for {
       maybeElement <- get(id)
       element <- maybeElement.fold[Future[UserStatus]](Future.failed(UserStatusDoesNotExist(id)))(Future.successful)

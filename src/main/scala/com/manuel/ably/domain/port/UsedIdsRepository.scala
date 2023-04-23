@@ -7,11 +7,10 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
 trait UsedIdsRepository {
-  implicit val ec: ExecutionContext
   val cache: Cache[String, Long]
 
   //atomically store the element and verify that it didn't exist before.
-  def store(id: String): Future[Unit] = {
+  def store(id: String)(implicit ec: ExecutionContext): Future[Unit] = {
     val randomId = System.currentTimeMillis() + Random.nextInt()
     for {
       maybeElement <- Future(cache.get(id, () => randomId))
