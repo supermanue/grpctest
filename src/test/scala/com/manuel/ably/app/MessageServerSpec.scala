@@ -10,9 +10,9 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.time.Span
 import org.scalatest.wordspec.AnyWordSpec
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class MessageServerSpec
@@ -54,12 +54,12 @@ class MessageServerSpec
 
 
     "handle several client requests concurrently" in {
-      val numberOfClients = 10
-      val requests = (1 to numberOfClients).map(id =>StreamRequest(s"uuid-$id", Some(3)))
+      val numberOfClients = 100
+      val requests = (1 to numberOfClients).map(id => StreamRequest(s"uuid-$id", Some(3)))
       val replies = requests.map(client.sendMessageStream)
-      val responses = replies.map(_.run().futureValue)
+      val responses = replies.map(_.run())
 
-      responses.foreach(_ should === (Done.done()))
+      responses.foreach(a => Await.result(a, 10.seconds) should ===(Done.done()))
     }
   }
 

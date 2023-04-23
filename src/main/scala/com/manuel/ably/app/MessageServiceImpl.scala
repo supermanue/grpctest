@@ -14,10 +14,9 @@ import scala.util.{Failure, Success, Try}
 class MessageServiceImpl(system: ActorSystem[_], messageStreamService: MessageStreamService) extends MessageStreamer {
   private implicit val sys: ActorSystem[_] = system
 
-  //TODO functionality: 1. validate input;
-  //TODO I'm not sure at all that this supports concurrent clients
   override def sendMessageStream(in: StreamRequest): Source[StreamResponse, NotUsed] = {
 
+    //TODO: validate input: uuid is an UUID, number is positive and < 0xffff
     val futureMessages: Future[Seq[StreamResponse]] = messageStreamService.getMessages(in.uuid, in.number)
 
     val source = Try(Await.result(futureMessages, 3.seconds)) match { //TODO this is ugly and inefficient. I should not be waiting here but use a direct stream from the service to output
