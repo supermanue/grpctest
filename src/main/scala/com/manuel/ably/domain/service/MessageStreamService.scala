@@ -37,12 +37,11 @@ The server logic is:
       _ <- userStatusRepository.store(status)
     } yield status
 
-  //TODO testing: this may crash with status.delivered=0
   private def generateMessageSequence(status: UserStatus)(implicit ec: ExecutionContext): Future[Seq[StreamResponse]] =
   Future{
     val rand = new scala.util.Random(status.pseudorandomSeed)
     (1 to status.messagesDelivered).foreach(_ => rand.nextInt()) //TODO suboptimal
-    val messages = (status.messagesDelivered to status.totalMessages).map(_ => rand.nextInt())
+    val messages = (status.messagesDelivered until status.totalMessages).map(_ => rand.nextInt())
     val checksum = Checksum.adler32sum(messages.map(_.toString).mkString)
     val list = messages.dropRight(1).map(n => StreamResponse(n.toString)).appended(StreamResponse(messages.last.toString, Some(checksum)))
     list

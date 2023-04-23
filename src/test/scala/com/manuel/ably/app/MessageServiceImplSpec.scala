@@ -1,4 +1,3 @@
-//#full-example
 package com.manuel.ably.app
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
@@ -53,4 +52,3 @@ class MessageServiceImplSpec
     }
   }
 }
-//#full-example

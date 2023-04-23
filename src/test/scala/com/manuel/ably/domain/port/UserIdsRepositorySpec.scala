@@ -36,8 +36,8 @@ class UserIdsRepositorySpec
     }
 
     "store maxSize elements concurrently (although being a cache some may be discarded)" in {
-      val a = (1 to service.maxSize.toInt).map(id => service.store(id.toString))
-      a.foreach(a => Await.result(a, 3.seconds) should ===())
+      val executions = (1 to service.maxSize.toInt).map(id => service.store(id.toString))
+      executions.foreach(a => Await.result(a, 3.seconds) should ===())
     }
   }
 }
