@@ -1,5 +1,6 @@
-package com.manuel.ably.adapter.service
+package com.manuel.ably.domain.port
 
+import com.manuel.ably.adapter.service.UserIdsLocalCacheService
 import com.manuel.ably.domain.model.IdAlreadyExists
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
@@ -9,7 +10,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 
-class UserIdsLocalCacheServiceSpec
+class UserIdsRepositorySpec
   extends AnyWordSpec
     with BeforeAndAfterEach
     with Matchers

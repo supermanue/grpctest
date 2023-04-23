@@ -10,6 +10,7 @@ lazy val akkaGrpcVersion = "2.3.1"
 lazy val scalaUUIDVersion = "0.3.1"
 lazy val scalaCacheVersion = "1.0.0-M6"
 lazy val scalaCacheGuavaVersion = "0.28.0"
+lazy val mockitoVersion = "3.2.15.0"
 
 enablePlugins(AkkaGrpcPlugin)
 
@@ -42,6 +43,9 @@ libraryDependencies ++= Seq(
 
   //caching
   "com.github.cb372" %% "scalacache-core" % scalaCacheVersion,
-  "com.github.cb372" %% "scalacache-guava" % scalaCacheGuavaVersion
+  "com.github.cb372" %% "scalacache-guava" % scalaCacheGuavaVersion,
+
+  //Mocks
+  "org.scalatestplus" %% "mockito-4-6" % mockitoVersion % "test"
 
 )

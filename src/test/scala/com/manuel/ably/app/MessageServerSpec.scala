@@ -37,7 +37,7 @@ class MessageServerSpec
 
   implicit val clientSystem: ActorSystem[_] = ActorSystem(Behaviors.empty, "GreeterClient")
 
-  val client: MessageStreamerClient = MessageStreamerClient(GrpcClientSettings.fromConfig("helloworld.GreeterService"))
+  val client: MessageStreamerClient = MessageStreamerClient(GrpcClientSettings.fromConfig("com.manuel.ably.client"))
 
   override def afterAll: Unit = {
     ActorTestKit.shutdown(clientSystem)
