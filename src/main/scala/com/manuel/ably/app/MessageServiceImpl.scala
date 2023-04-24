@@ -25,7 +25,7 @@ class MessageServiceImpl(system: ActorSystem[_], messageStreamService: MessageSt
     }
 
     Source
-      .tick(1.second, 1.second, None)
+      .tick(0.seconds, 1.second, None) //TODO here we would use a client variable coming in StreamRequest instead of a fixed "1" if we want to allow the client to specify the interval between messages
       .zip(source)
       .map { case (_, response) =>
         messageStreamService.confirmDelivery(in.uuid)

@@ -45,7 +45,7 @@ class MessageServerSpec
   }
 
   "MessageServer" should {
-    "handle a single" in {
+    "handle a single client request" in {
       val request = StreamRequest("uuid", Some(1))
       val reply = client.sendMessageStream(request)
       val response = reply.run().futureValue

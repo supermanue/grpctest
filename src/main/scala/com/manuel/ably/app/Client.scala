@@ -3,13 +3,15 @@ package com.manuel.ably.app
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.grpc.{GrpcClientSettings, GrpcServiceException}
+import akka.stream.Materializer
 import com.manuel.ably.domain.model.{IncorrectChecksum, NonExistingChecksum}
 import com.manuel.ably.domain.tools.Checksum
 import com.manuel.ably.{MessageStreamerClient, StreamRequest}
 
 import java.util.UUID
-import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Random, Success}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext}
+import scala.util.{Failure, Random, Success, Try}
 
 object Client {
 
@@ -28,35 +30,47 @@ object Client {
       else None
     val input: StreamRequest = StreamRequest(uuid, desiredMessages)
 
-    getMessageStream(input)
+    var executionResult = getMessageStream(client, input)
+    while (!executionResult._1) {
+      executionResult = getMessageStream(client, input)
+      Thread.sleep(Random.between(1000, 5000))
+    }
 
-    def getMessageStream(input: StreamRequest): Unit = {
-      val responseStream = client.sendMessageStream(input)
+    System.exit(executionResult._2)
+  }
 
-      val fullResponse = responseStream.runFold[(String, Option[Int])](("", None)) { (acum, response) =>
-        println(s"got streaming reply: ${response.message}")
-        (acum._1 + response.message, response.checksum)
-      }
+  def getMessageStream(client: MessageStreamerClient, input: StreamRequest)(implicit ex: ExecutionContext, mat: Materializer): (Boolean, Int) = {
+    val responseStream = client.sendMessageStream(input)
 
-      fullResponse.onComplete {
-        case Success(response) =>
-          val checksum = Checksum.adler32sum(response._1)
-          val serverChecksum = response._2.getOrElse(throw NonExistingChecksum)
-          if (checksum == serverChecksum) {
-            println(s"checksum: $checksum")
-            System.exit(0)
-          }
-          else
-            println(IncorrectChecksum(checksum, serverChecksum).message)
-          System.exit(-1)
-        case Failure(_: GrpcServiceException) =>
-          println(s"Connection error in client. Retrying")
-          Thread.sleep(Random.between(1000, 5000))
-          getMessageStream(input) // TODO this is not final recursive so potentially could end up in a stack overflow.
-        case Failure(e) =>
-          println(s"Error in client, exiting: $e")
-          System.exit(-1)
-      }
+    val futureResponse = responseStream.runFold[(String, Option[Int])](("", None)) { (acum, response) =>
+      println(s"got streaming reply: ${response.message}")
+      (acum._1 + response.message, response.checksum)
+    }
+
+    val response = Try(Await.result(futureResponse, Duration.Inf))
+
+    processStreamResult(response)
+  }
+
+  private def processStreamResult(response: Try[(String, Option[Int])]) = {
+    response match {
+      case Success(response) =>
+        val checksum = Checksum.adler32sum(response._1)
+        val serverChecksum = response._2.getOrElse(throw NonExistingChecksum)
+        if (checksum == serverChecksum) {
+          println(s"checksum: $checksum")
+          (true, 0)
+        }
+        else {
+          println(IncorrectChecksum(checksum, serverChecksum).message)
+          (true, -1)
+        }
+      case Failure(_: GrpcServiceException) =>
+        println(s"Connection error in client. Retrying")
+        (false, 0)
+      case Failure(e) =>
+        println(s"Error in client, exiting: $e")
+        (true, -2)
     }
   }
 }

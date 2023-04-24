@@ -5,6 +5,7 @@
 Testing:
 
 ```bash
+chmod +x sbt
 ./sbt test
 ```
 
@@ -39,6 +40,8 @@ Also, I didn't see clearly what to do with the customer Ids. I would have asked 
 implemented this on my weekend and I wanted to wrap it up, so maybe the behavior is not the requested one. I have
 followed an approach where a client Id can only be used once, so I'm storing them forever. I don't know if this is
 correct, but I don't think it affects the final result too much so I didn't worry about it.
+
+Lastly, in this approach the client cannot specify the delay between messages, it is fixed to 1 second. 
 
 ### Testing
 
@@ -100,10 +103,8 @@ requests + large number of messages per request. Also I haven't limited the numb
 up with an error. This can be set up with some configuration parameters, the used framework (AKKA HTTP) has
 out-of-the-box support for that.
 
-In the client, the current implementation can lead to a stack overflow if the server is down for too long, as I am
-performing a non-final recursive call. This is definitely a hack and I'm aware of it, but it's nearly 20h on a Sunday
-and I cannot invest much more time on this project. I'm sorry for that. At least I'm pointing at the issue and the
-solution is fairly simple, I hope that's something  `¯\_(ツ)_/¯`.
+In the client, I a sufficiently long list will also lead to a memory issue. An easy way of avoiding this would be
+writing the partial results into a file and then calculating the cheksum of the file content
 
 ### Security
 
