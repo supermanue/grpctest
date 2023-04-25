@@ -17,7 +17,8 @@ class MessageServiceImpl(system: ActorSystem[_], messageStreamService: MessageSt
   override def sendMessageStream(in: StreamRequest): Source[StreamResponse, NotUsed] = {
 
     // TODO: validate input: uuid is an UUID, number is positive and < 0xffff
-    val futureMessages: Future[Seq[StreamResponse]] = messageStreamService.getMessages(in.uuid, in.number)
+    val futureMessagesList: Future[(Seq[Int], Int)] = messageStreamService.getMessages(in.uuid, in.number)
+    val futureMessages: Future[Seq[StreamResponse]] = futureMessagesList.map(messagesAndChecksum => messagesAndChecksum._1.dropRight(1).map(n => StreamResponse(n.toString)).appended(StreamResponse(messagesAndChecksum._1.last.toString, Some(messagesAndChecksum._2))))
 
     val source = Try(Await.result(futureMessages, 3.seconds)) match { // TODO this is ugly and inefficient. I should not be waiting here but use a direct stream from the service to output
       case Success(messages) => Source.fromIterator(() => Iterator.from(messages))

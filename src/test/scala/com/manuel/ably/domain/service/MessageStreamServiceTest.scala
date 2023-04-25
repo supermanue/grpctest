@@ -42,10 +42,10 @@ class MessageStreamServiceTest
       when(userStatusRepositoryMock.store(any())(any())).thenReturn(Future(None))
 
       val result = Await.result(service.getMessages(id, numberOfMessages), 3.seconds)
-      val checksum = Checksum.adler32sum(result.map(_.message).mkString)
+      val checksum = Checksum.adler32sum(result._1.mkString)
 
-      result.size should ===(10)
-      result.last.checksum should ===(Some(checksum))
+      result._1.size should ===(10)
+      result._2 should ===(checksum)
     }
 
     "continue a broken execution delivering the remaining messages" in {
@@ -55,7 +55,7 @@ class MessageStreamServiceTest
 
       val result = Await.result(service.getMessages(id, numberOfMessages), 3.seconds)
 
-      result.size should ===(oldStatus.totalMessages - oldStatus.messagesDelivered)
+      result._1.size should ===(oldStatus.totalMessages - oldStatus.messagesDelivered)
     }
 
     "return an error if the Id has already been used" in {

@@ -2,9 +2,9 @@ package com.manuel.ably.app
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
+import com.manuel.ably.StreamRequest
 import com.manuel.ably.domain.service.MessageStreamService
 import com.manuel.ably.domain.tools.Checksum
-import com.manuel.ably.{StreamRequest, StreamResponse}
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{doNothing, when}
 import org.scalatest.BeforeAndAfterAll
@@ -34,7 +34,7 @@ class MessageServiceImplSpec
   val service = new MessageServiceImpl(system, mockMessageStreamService)
 
   override def beforeAll(): Unit = {
-    when(mockMessageStreamService.getMessages(anyString(), any[Option[Int]])(any[ExecutionContext]())).thenReturn(Future.successful(Seq(StreamResponse("1"), StreamResponse("2", Some(9830500)))))
+    when(mockMessageStreamService.getMessages(anyString(), any[Option[Int]])(any[ExecutionContext]())).thenReturn(Future.successful(Seq(1, 2), 9830500))
     doNothing().when(mockMessageStreamService).confirmDelivery(anyString())(any[ExecutionContext]())
   }
 
