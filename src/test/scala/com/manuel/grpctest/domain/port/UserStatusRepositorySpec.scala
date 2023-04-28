@@ -1,7 +1,7 @@
-package com.manuel.ably.domain.port
+package com.manuel.grpctest.domain.port
 
-import com.manuel.ably.adapter.service.UserStatusLocalCacheService
-import com.manuel.ably.domain.model.UserStatus
+import com.manuel.grpctest.adapter.service.UserStatusLocalCacheService
+import com.manuel.grpctest.domain.model.UserStatus
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers

@@ -1,4 +1,4 @@
-package com.manuel.ably.domain.service
+package com.manuel.grpctest.domain.service
 
 import scala.util.Random
 

@@ -1,4 +1,4 @@
-package com.manuel.ably.app
+package com.manuel.grpctest.app
 
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
@@ -17,9 +17,8 @@ object Client {
       ActorSystem(Behaviors.empty, "AblyClient")
     implicit val ec: ExecutionContext = sys.executionContext
 
-    // TODO client port should be configurable as input param. It is implemented in the Server
     val client = MessageStreamerClient(
-      GrpcClientSettings.fromConfig("com.manuel.ably.client")
+      GrpcClientSettings.fromConfig("com.manuel.grpctest.client")
     )
 
     println(s"Performing getMessageStream")

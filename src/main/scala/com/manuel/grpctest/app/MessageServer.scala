@@ -1,11 +1,11 @@
-package com.manuel.ably.app
+package com.manuel.grpctest.app
 
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.pki.pem.{DERPrivateKeyLoader, PEMDecoder}
-import com.manuel.ably.domain.service.MessageStreamService
+import com.manuel.grpctest.domain.service.MessageStreamService
 import com.manuel.grpctest.MessageStreamerHandler
 import com.typesafe.config.ConfigFactory
 

@@ -1,11 +1,11 @@
-package com.manuel.ably.app
+package com.manuel.grpctest.app
 
 import akka.Done
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.grpc.GrpcClientSettings
-import com.manuel.ably.{MessageStreamerClient, StreamRequest}
+import com.manuel.grpctest.{MessageStreamerClient, StreamRequest}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures

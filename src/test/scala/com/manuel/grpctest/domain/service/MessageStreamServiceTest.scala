@@ -1,8 +1,8 @@
-package com.manuel.ably.domain.service
+package com.manuel.grpctest.domain.service
 
-import com.manuel.ably.domain.model.{IdAlreadyExists, UserStatus}
-import com.manuel.ably.domain.port.{UsedIdsRepository, UserStatusRepository}
-import com.manuel.ably.domain.tools.Checksum
+import com.manuel.grpctest.domain.model.{IdAlreadyExists, UserStatus}
+import com.manuel.grpctest.domain.port.{UsedIdsRepository, UserStatusRepository}
+import com.manuel.grpctest.domain.tools.Checksum
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach

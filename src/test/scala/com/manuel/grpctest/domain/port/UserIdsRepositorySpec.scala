@@ -1,7 +1,7 @@
-package com.manuel.ably.domain.port
+package com.manuel.grpctest.domain.port
 
-import com.manuel.ably.adapter.service.UserIdsLocalCacheService
-import com.manuel.ably.domain.model.IdAlreadyExists
+import com.manuel.grpctest.adapter.service.UserIdsLocalCacheService
+import com.manuel.grpctest.domain.model.IdAlreadyExists
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers

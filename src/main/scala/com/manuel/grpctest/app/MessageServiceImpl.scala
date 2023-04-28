@@ -1,9 +1,9 @@
-package com.manuel.ably.app
+package com.manuel.grpctest.app
 
 import akka.NotUsed
 import akka.actor.typed.ActorSystem
 import akka.stream.scaladsl.Source
-import com.manuel.ably.domain.service.MessageStreamService
+import com.manuel.grpctest.domain.service.MessageStreamService
 import com.manuel.grpctest.{MessageStreamer, StreamRequest, StreamResponse}
 
 import scala.concurrent.duration.DurationInt

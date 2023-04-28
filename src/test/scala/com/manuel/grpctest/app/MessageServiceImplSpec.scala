@@ -1,10 +1,10 @@
-package com.manuel.ably.app
+package com.manuel.grpctest.app
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
-import com.manuel.ably.StreamRequest
-import com.manuel.ably.domain.service.MessageStreamService
-import com.manuel.ably.domain.tools.Checksum
+import com.manuel.grpctest.StreamRequest
+import com.manuel.grpctest.domain.service.MessageStreamService
+import com.manuel.grpctest.domain.tools.Checksum
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{doNothing, when}
 import org.scalatest.BeforeAndAfterAll
