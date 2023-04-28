@@ -34,22 +34,13 @@ class MessageServer(system: ActorSystem[_]) {
     implicit val sys = system
     implicit val ec: ExecutionContext = system.executionContext
 
-    val defaultPort = 9000 // TODO this should go in a config file
-    val cacheExpirationTime = 30
-    val port =
-      if (args.length > 0)
-        args(
-          0
-        ).toInt // TODO this is unsafe and can make the App crash if the input is not an integer
-      else defaultPort
-
     val messageStreamService: MessageStreamService = new MessageStreamService()
     val service: HttpRequest => Future[HttpResponse] = MessageStreamerHandler(
       new MessageServiceImpl(system, messageStreamService)
     )
 
     val bound: Future[Http.ServerBinding] = Http(system)
-      .newServerAt(interface = "127.0.0.1", port = port)
+      .newServerAt(interface = "127.0.0.1", port = 9000)
       .enableHttps(serverHttpContext)
       .bind(service)
       .map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))
@@ -89,7 +80,7 @@ class MessageServer(system: ActorSystem[_]) {
     keyManagerFactory.init(ks, null)
     val context = SSLContext.getInstance("TLS")
     context.init(keyManagerFactory.getKeyManagers, null, new SecureRandom)
-    ConnectionContext.https(context)
+    ConnectionContext.httpsServer(context)
   }
 
   private def readPrivateKeyPem(): String =
