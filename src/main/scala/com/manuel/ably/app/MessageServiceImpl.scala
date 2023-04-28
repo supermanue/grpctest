@@ -18,12 +18,6 @@ class MessageServiceImpl(
   override def sendMessageStream(
       in: StreamRequest
   ): Source[StreamResponse, NotUsed] = {
-    val messageNumber = 5
-    // TODO: validate input: uuid is an UUID, number is positive and < 0xffff
-    val messages = (1 to messageNumber)
-      .map(_ => Random.nextInt(10))
-      .map(elem => StreamResponse(s"acum-$elem", elem))
-    val source = Source.fromIterator(() => Iterator.from(messages))
 
     Source
       .tick(
@@ -31,9 +25,9 @@ class MessageServiceImpl(
         1.second,
         None
       ) // TODO here we would use a client variable coming in StreamRequest instead of a fixed "1" if we want to allow the client to specify the interval between messages
-      .zip(source)
-      .map { case (_, response) =>
-        response
+      .scan (StreamResponse("", 0)){ (acum, _) =>
+        val next = messageStreamService.nextMessage(acum.acumulator)
+        StreamResponse(next._1, next._2)
       }
       .mapMaterializedValue(_ => NotUsed)
   }

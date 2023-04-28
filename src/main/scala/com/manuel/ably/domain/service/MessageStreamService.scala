@@ -10,6 +10,10 @@ import scala.util.Random
 class MessageStreamService(userIdsRepository: UsedIdsRepository, userStatusRepository: UserStatusRepository) {
   val defaultNumberOfMessages = 3 // TODO this should be random but I'm using a small constant for debugging&testing purpose
 
+  def nextMessage(acum: String): (String, Int) = {
+    val nextElem = Random.nextInt(10) // element in [0,9]
+    (acum + nextElem.toString, nextElem)
+  }
   def getMessages(id: String, numberOfMessages: Option[Int])(implicit ec: ExecutionContext): Future[(Seq[Int], Int)] = {
     for {
       maybeExistingStatus <- userStatusRepository.get(id)
