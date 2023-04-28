@@ -7,7 +7,6 @@ import com.manuel.ably.domain.service.MessageStreamService
 import com.manuel.grpctest.{MessageStreamer, StreamRequest, StreamResponse}
 
 import scala.concurrent.duration.DurationInt
-import scala.util.Random
 
 class MessageServiceImpl(
     system: ActorSystem[_],
@@ -19,13 +18,11 @@ class MessageServiceImpl(
       in: StreamRequest
   ): Source[StreamResponse, NotUsed] = {
 
+    val first = messageStreamService.nextMessage("")
+
     Source
-      .tick(
-        0.seconds,
-        1.second,
-        None
-      ) // TODO here we would use a client variable coming in StreamRequest instead of a fixed "1" if we want to allow the client to specify the interval between messages
-      .scan (StreamResponse("", 0)){ (acum, _) =>
+      .tick(0.seconds, 1.second, None)
+      .scan(StreamResponse(first._1, first._2)) { (acum, _) =>
         val next = messageStreamService.nextMessage(acum.acumulator)
         StreamResponse(next._1, next._2)
       }

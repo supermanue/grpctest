@@ -5,8 +5,6 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.pki.pem.{DERPrivateKeyLoader, PEMDecoder}
-import com.manuel.ably.adapter.service.{UserIdsLocalCacheService, UserStatusLocalCacheService}
-import com.manuel.ably.domain.port.{UsedIdsRepository, UserStatusRepository}
 import com.manuel.ably.domain.service.MessageStreamService
 import com.manuel.grpctest.MessageStreamerHandler
 import com.typesafe.config.ConfigFactory
@@ -45,11 +43,7 @@ class MessageServer(system: ActorSystem[_]) {
         ).toInt // TODO this is unsafe and can make the App crash if the input is not an integer
       else defaultPort
 
-    val userIdsRepository: UsedIdsRepository = new UserIdsLocalCacheService()
-    val userStatusRepository: UserStatusRepository =
-      new UserStatusLocalCacheService(Some(cacheExpirationTime))
-    val messageStreamService: MessageStreamService =
-      new MessageStreamService(userIdsRepository, userStatusRepository)
+    val messageStreamService: MessageStreamService = new MessageStreamService()
     val service: HttpRequest => Future[HttpResponse] = MessageStreamerHandler(
       new MessageServiceImpl(system, messageStreamService)
     )
