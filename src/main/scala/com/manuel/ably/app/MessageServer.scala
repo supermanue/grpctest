@@ -5,10 +5,10 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.pki.pem.{DERPrivateKeyLoader, PEMDecoder}
-import com.manuel.ably.MessageStreamerHandler
 import com.manuel.ably.adapter.service.{UserIdsLocalCacheService, UserStatusLocalCacheService}
 import com.manuel.ably.domain.port.{UsedIdsRepository, UserStatusRepository}
 import com.manuel.ably.domain.service.MessageStreamService
+import com.manuel.grpctest.MessageStreamerHandler
 import com.typesafe.config.ConfigFactory
 
 import java.security.cert.{Certificate, CertificateFactory}
@@ -22,7 +22,8 @@ import scala.util.{Failure, Success}
 object MessageServer {
 
   def main(args: Array[String]): Unit = {
-    val conf = ConfigFactory.parseString("akka.http.server.preview.enable-http2 = on")
+    val conf = ConfigFactory
+      .parseString("akka.http.server.preview.enable-http2 = on")
       .withFallback(ConfigFactory.defaultApplication())
     val system = ActorSystem[Nothing](Behaviors.empty, "AblyServer", conf)
     new MessageServer(system).run(args)
@@ -38,14 +39,20 @@ class MessageServer(system: ActorSystem[_]) {
     val defaultPort = 9000 // TODO this should go in a config file
     val cacheExpirationTime = 30
     val port =
-      if (args.length > 0) args(0).toInt // TODO this is unsafe and can make the App crash if the input is not an integer
+      if (args.length > 0)
+        args(
+          0
+        ).toInt // TODO this is unsafe and can make the App crash if the input is not an integer
       else defaultPort
 
-
     val userIdsRepository: UsedIdsRepository = new UserIdsLocalCacheService()
-    val userStatusRepository: UserStatusRepository = new UserStatusLocalCacheService(Some(cacheExpirationTime))
-    val messageStreamService: MessageStreamService = new MessageStreamService(userIdsRepository, userStatusRepository)
-    val service: HttpRequest => Future[HttpResponse] = MessageStreamerHandler(new MessageServiceImpl(system, messageStreamService))
+    val userStatusRepository: UserStatusRepository =
+      new UserStatusLocalCacheService(Some(cacheExpirationTime))
+    val messageStreamService: MessageStreamService =
+      new MessageStreamService(userIdsRepository, userStatusRepository)
+    val service: HttpRequest => Future[HttpResponse] = MessageStreamerHandler(
+      new MessageServiceImpl(system, messageStreamService)
+    )
 
     val bound: Future[Http.ServerBinding] = Http(system)
       .newServerAt(interface = "127.0.0.1", port = port)
@@ -56,7 +63,11 @@ class MessageServer(system: ActorSystem[_]) {
     bound.onComplete {
       case Success(binding) =>
         val address = binding.localAddress
-        println("gRPC server bound to {}:{}", address.getHostString, address.getPort)
+        println(
+          "gRPC server bound to {}:{}",
+          address.getHostString,
+          address.getPort
+        )
       case Failure(ex) =>
         println("Failed to bind gRPC endpoint, terminating system", ex)
         system.terminate()
@@ -64,7 +75,6 @@ class MessageServer(system: ActorSystem[_]) {
 
     bound
   }
-
 
   private def serverHttpContext: HttpsConnectionContext = {
     val privateKey =
