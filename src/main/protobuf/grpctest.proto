@@ -9,10 +9,10 @@ service MessageStreamer {
 }
 
 message StreamRequest{
-  optional int32 maxElems = 1;
+  string id = 1;
 }
 
 message StreamResponse{
-  string acumulator = 1;
+  string validation = 1;
   int32 elem = 2;
 }
