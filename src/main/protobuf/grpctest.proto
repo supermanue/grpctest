@@ -1,19 +1,18 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "com.manuel.ably";
-option java_outer_classname = "AblyProto";
+option java_package = "com.manuel.grpctest";
+option java_outer_classname = "ManuelProto";
 
 service MessageStreamer {
   rpc SendMessageStream (StreamRequest) returns (stream StreamResponse) {}
 }
 
 message StreamRequest{
-  string uuid = 1;
-  optional int32 number = 2;
+  string id = 1;
 }
 
 message StreamResponse{
-  string message = 1;
-  optional int32 checksum = 2;
+  string validation = 1;
+  int32 elem = 2;
 }
